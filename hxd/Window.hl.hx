@@ -21,7 +21,9 @@ enum DisplayMode {
 typedef Monitor = {
 	name : String,
 	width : Int,
-	height : Int
+	height : Int,
+	x : Int,
+	y : Int,
 }
 
 typedef DisplaySetting = {
@@ -72,6 +74,10 @@ class Window {
 	public var displayMode(get, set) : DisplayMode;
 	#if (hl_ver >= version("1.12.0"))
 	public var currentMonitorIndex(get,never) : Int;
+	#end
+	#if (hldx || hlsdl)
+	public var x(get, set) : Int;
+	public var y(get, set) : Int;
 	#end
 
 	#if hlsdl
@@ -780,7 +786,7 @@ class Window {
 
 	#if (hl_ver >= version("1.12.0"))
 	public static function getMonitors() : Array<Monitor> {
-		return [for(m in #if hldx dx.Window.getMonitors() #elseif hlsdl sdl.Sdl.getDisplays() #else [] #end) { name: m.name, width: m.right-m.left, height: m.bottom-m.top}];
+		return [for(m in #if hldx dx.Window.getMonitors() #elseif hlsdl sdl.Sdl.getDisplays() #else [] #end) { name: m.name, width: m.right-m.left, height: m.bottom-m.top, x: m.left, y: m.top }];
 	}
 
 	// If registry is set, return the default DisplaySetting when it's currently modified by the application.
@@ -867,6 +873,24 @@ class Window {
 		#end
 	}
 
+	public function setMonitorIndex(idx: Int) : Void {
+		var monitors = getMonitors();
+		if(idx < 0 || idx >= monitors.length) return;
+		var m = monitors[idx];
+		window.setPosition(
+			m.x + (m.width - windowWidth) >> 1,
+			m.y + (m.height - windowHeight) >> 1
+		);
+		monitor = idx;
+	}
+
+	#end
+
+	#if (hldx || hlsdl)
+	function get_x() : Int return window.x;
+	function get_y() : Int return window.y;
+	function set_x(v: Int) : Int { window.setPosition(v, window.y); return v; }
+	function set_y(v: Int) : Int { window.setPosition(window.x, v); return v; }
 	#end
 	function get_title() : String {
 		#if (hldx || hlsdl)
