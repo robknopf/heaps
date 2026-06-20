@@ -316,7 +316,7 @@ class LocalFileSystem implements FileSystem {
 	static var isWindows = Sys.systemName() == "Windows";
 	public static var FILES_CHECK_MAX = 5;
 
-	public function new( dir : String, configuration : String, ?storagePath ) {
+	public function new( dir : String, ?configuration : String, ?storagePath ) {
 		baseDir = dir;
 		if( configuration == null )
 			configuration = "default";
@@ -468,7 +468,7 @@ class LocalFileSystem implements FileSystem {
 
 	public var baseDir(default,null) : String;
 
-	public function new( dir : String ) {
+	public function new( dir : String, ?configuration : String, ?storagePath ) {
 		throw "Local file system is not supported for this platform";
 	}
 

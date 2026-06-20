@@ -881,6 +881,7 @@ class Window {
 	}
 
 	public function setMonitorIndex(idx: Int) : Void {
+		#if (hldx || hlsdl)
 		var monitors = getMonitors();
 		if(idx < 0 || idx >= monitors.length) return;
 		var m = monitors[idx];
@@ -889,6 +890,7 @@ class Window {
 			m.y + (m.height - windowHeight) >> 1
 		);
 		monitor = idx;
+		#end
 	}
 
 	#end
